@@ -40,6 +40,10 @@ function App() {
     fetchHolder();
   }, [account?.address]);
 
+  var intervalId = window.setInterval(function () {
+    fetchHolder();
+  }, 5000);
+  
   async function updateCount() {
     fetchHolder();
     if (!account) return [];
@@ -65,9 +69,7 @@ function App() {
       <Layout>
         <Row align="middle">
           <Col span={10} offset={2}>
-            <h1>
-              Total Clicks: {count}
-            </h1>
+            <h1>Total Clicks: {count}</h1>
           </Col>
           <Col span={12} style={{ textAlign: "right", paddingRight: "100px" }}>
             <WalletSelector />
@@ -84,23 +86,44 @@ function App() {
           >
             <Row gutter={[0, 0]}>
               <Col span={8} offset={0}>
-                <Button
-                  className="clickBtn"
-                  onClick={updateCount}
-                  block
-                  type="primary"
-                  style={{
-                    backgroundColor: "red",
-                    height: "150px",
-                    width: "150px",
-                    borderRadius: "50%",
-                    marginLeft:"-3rem",
-                    marginTop:"-2rem",
-                    marginBottom:"2rem"
-                  }}
-                >
-                  CLICK ME
-                </Button>
+                {account ? (
+                  <Button
+                    className="clickBtn"
+                    onClick={updateCount}
+                    block
+                    type="primary"
+                    style={{
+                      backgroundColor: "red",
+                      height: "150px",
+                      width: "150px",
+                      borderRadius: "50%",
+                      marginLeft: "-3rem",
+                      marginTop: "-2rem",
+                      marginBottom: "2rem",
+                    }}
+                  >
+                    CLICK ME
+                  </Button>
+                ) : (
+                  <Button
+                    className="clickBtn"
+                    block
+                    type="primary"
+                    style={{
+                      backgroundColor: "red",
+                      height: "150px",
+                      width: "150px",
+                      borderRadius: "50%",
+                      marginLeft: "-3rem",
+                      marginTop: "-2rem",
+                      marginBottom: "2rem",
+                      cursor:"not-allowed",
+                      opacity:"0.75"
+                    }}
+                  >
+                    CONNECT WALLET
+                  </Button>
+                )}
               </Col>
             </Row>
           </Col>
