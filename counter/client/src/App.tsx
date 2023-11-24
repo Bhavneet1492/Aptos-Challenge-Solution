@@ -6,6 +6,7 @@ import "@aptos-labs/wallet-adapter-ant-design/dist/index.css";
 import { Provider, Network } from "aptos";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import {useEffect,useState} from "react";
+// import * as child from "child_process";
 
 // const provider = new Provider(Network.DEVNET);
 
@@ -16,6 +17,7 @@ type CountHolder = {
 function App() {
   const { account, signAndSubmitTransaction} = useWallet();
   const [count, setCount] = useState<number>(0);
+  const [temp, setTemp] = useState<any>(" ");
   const [transactionInProgress, setTransactionInProgress] =
     useState<boolean>(false);
   const [accountHasHolder, setAccountHasHolder] = useState<boolean>(false);
@@ -27,36 +29,36 @@ function App() {
         account.address,
         `${moduleAddress}::counter::CountHolder`
       );
+      console.log(CountHolderResource,"-------------");
       setAccountHasHolder(true);
       setCount((CountHolderResource as any).data.count);
+      setTemp((CountHolderResource as any).data);
     } catch (e: any) {
       setAccountHasHolder(false);
     }
   };
 
-  useEffect(() => {
-    fetchHolder();
-  }, [account?.address]);
+  // useEffect(() => {
+  //   fetchHolder();
+  // }, [account?.address]);
 
   async function updateCount() {
     fetchHolder();
-    // setCount(count + 1);
     if (!account) return [];
     setTransactionInProgress(true);
+    // child.exec(`./aptos move run --function-id "default::counter::click"`);
     const payload = {
       type: "entry_function_payload",
-      function: `${moduleAddress}::counter::click`,
+      function: `default::counter::click`,
       type_arguments: [],
       arguments: [],
     };
+    // console.log("clicked\n",account,payload);
     try {
-      // sign and submit transaction to chain
-      const response = await signAndSubmitTransaction(payload);
-      // wait for transaction
+      const response = await window.aptos.signAndSubmitTransaction(payload);
+      console.log(response,"{{{{{{{{{{{")
       await provider.waitForTransaction(response.hash);
       setAccountHasHolder(true);
-    } catch (error: any) {
-      setAccountHasHolder(false);
     } finally {
       setTransactionInProgress(false);
     }
