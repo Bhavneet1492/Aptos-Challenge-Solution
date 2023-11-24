@@ -7,6 +7,12 @@ import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
 
 const wallets = [new PetraWallet()];
 
+declare global {
+  interface Window {
+    aptos: any;
+  }
+}
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
