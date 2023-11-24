@@ -8,7 +8,6 @@ import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import {useEffect,useState} from "react";
 // import * as child from "child_process";
 
-// const provider = new Provider(Network.DEVNET);
 
 type CountHolder = {
   count: number;
@@ -27,9 +26,8 @@ function App() {
     try {
       const CountHolderResource = await provider.getAccountResource(
         account.address,
-        `${moduleAddress}::counter::CountHolder`
+        `${account.address}::counter::CountHolder`
       );
-      console.log(CountHolderResource,"-------------");
       setAccountHasHolder(true);
       setCount((CountHolderResource as any).data.count);
       setTemp((CountHolderResource as any).data);
@@ -38,9 +36,9 @@ function App() {
     }
   };
 
-  // useEffect(() => {
-  //   fetchHolder();
-  // }, [account?.address]);
+  useEffect(() => {
+    fetchHolder();
+  }, [account?.address]);
 
   async function updateCount() {
     fetchHolder();
@@ -49,14 +47,12 @@ function App() {
     // child.exec(`./aptos move run --function-id "default::counter::click"`);
     const payload = {
       type: "entry_function_payload",
-      function: `default::counter::click`,
+      function: `${account.address}::counter::click`,
       type_arguments: [],
       arguments: [],
     };
-    // console.log("clicked\n",account,payload);
     try {
       const response = await window.aptos.signAndSubmitTransaction(payload);
-      console.log(response,"{{{{{{{{{{{")
       await provider.waitForTransaction(response.hash);
       setAccountHasHolder(true);
     } finally {
@@ -98,6 +94,9 @@ function App() {
                     height: "150px",
                     width: "150px",
                     borderRadius: "50%",
+                    marginLeft:"-3rem",
+                    marginTop:"-2rem",
+                    marginBottom:"2rem"
                   }}
                 >
                   CLICK ME
@@ -112,6 +111,4 @@ function App() {
 }
 
 export const provider = new Provider(Network.DEVNET);
-export const moduleAddress =
-  "0xc86b5f2d9339bed8229d9168ef70dba4c805ed1acd5b2aeb2d2e1c6943fb109c";
 export default App;
